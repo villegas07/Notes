@@ -6,7 +6,7 @@ import { useCategories } from '@/hooks/useCategories';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { NoteCard } from '@/components/notes/NoteCard';
 import { NoteForm } from '@/components/notes/NoteForm';
-import { NoteDetail } from '@/components/notes/NoteDetail';
+import NoteDetail from '@/components/notes/NoteDetail';
 import { CategoryModal } from '@/components/ui/CategoryModal';
 import { Note } from '@/core/domain/entities/Note';
 
