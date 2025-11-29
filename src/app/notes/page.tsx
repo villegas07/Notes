@@ -106,10 +106,15 @@ export default function NotesPage() {
     }
 
     if (viewMode === 'edit' && selectedNote) {
+      // Transformar NoteCategoryRelation[] a Category[]
+      const noteForForm = {
+        ...selectedNote,
+        categories: selectedNote.categories?.map(rel => rel.category)
+      };
       return (
         <div className="flex items-center justify-center h-full">
           <NoteForm
-            note={selectedNote}
+            note={noteForForm}
             onSave={handleUpdateNote}
             onCancel={() => setViewMode('detail')}
             categories={categories}
