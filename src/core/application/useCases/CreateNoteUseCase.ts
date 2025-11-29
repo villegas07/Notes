@@ -9,8 +9,8 @@ export class CreateNoteUseCase {
       throw new Error('Title is required');
     }
 
-    if (!data.content || data.content.trim().length === 0) {
-      throw new Error('Content is required');
+    if (!data.description || data.description.trim().length === 0) {
+      throw new Error('Description is required');
     }
 
     return await this.noteRepository.createNote(data);
