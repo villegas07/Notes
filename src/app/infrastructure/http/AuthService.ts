@@ -78,8 +78,8 @@ export class AuthService {
   /**
    * Verificar email
    */
-  static async verifyEmail(email: string, token: string): Promise<any> {
-    return HttpClient.post(`${BASE_URL}/auth/verify-email`, { email, token });
+  static async verifyEmail(token: string): Promise<any> {
+    return HttpClient.post(`${BASE_URL}/auth/verify-email`, { verificationToken: token });
   }
 
   /**

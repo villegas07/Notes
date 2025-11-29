@@ -19,7 +19,7 @@ export default function VerifyEmailPage() {
       setStatus("");
       return;
     }
-    AuthService.verifyEmail({ verificationToken: token })
+    AuthService.verifyEmail(token)
       .then(() => {
         setSuccess(true);
         setStatus("Email verified successfully!");
