@@ -1,0 +1,119 @@
+@import 'sweetalert2/dist/sweetalert2.min.css';
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Estilos personalizados para SweetAlert2 */
+
+.swal2-popup {
+  border-radius: 1rem;
+  padding: 2rem;
+}
+
+.swal2-title {
+  color: #1f2937;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.swal2-html-container {
+  color: #6b7280;
+  font-size: 1rem;
+}
+
+.swal2-icon.swal2-success {
+  border-color: #0d9488;
+}
+
+.swal2-icon.swal2-success [class^='swal2-success-line'] {
+  background-color: #0d9488;
+}
+
+.swal2-icon.swal2-success .swal2-success-ring {
+  border-color: rgba(13, 148, 136, 0.3);
+}
+
+.swal2-icon.swal2-warning {
+  border-color: #f59e0b;
+  color: #f59e0b;
+}
+
+.swal2-icon.swal2-error {
+  border-color: #ef4444;
+}
+
+.swal2-icon.swal2-error [class^='swal2-x-mark-line'] {
+  background-color: #ef4444;
+}
+
+.swal2-confirm {
+  border-radius: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.swal2-confirm:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.swal2-cancel {
+  border-radius: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.swal2-cancel:hover {
+  transform: translateY(-1px);
+}
+
+.swal2-actions {
+  gap: 1rem;
+}
+
+/* Animación de entrada suave */
+.swal2-show {
+  animation: swal2-show 0.3s;
+}
+
+@keyframes swal2-show {
+  0% {
+    transform: scale(0.7);
+    opacity: 0;
+  }
+  45% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+  80% {
+    transform: scale(0.95);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
