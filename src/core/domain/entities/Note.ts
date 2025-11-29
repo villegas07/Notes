@@ -1,3 +1,6 @@
+export interface NoteCategoryRelation {
+  category: Category;
+}
 export interface Note {
   id: string;
   title: string;
@@ -5,13 +8,13 @@ export interface Note {
   isArchived: boolean;
   createdAt: Date;
   updatedAt: Date;
-  categories?: Category[];
+  categories?: NoteCategoryRelation[];
 }
 
 export interface Category {
   id: string;
   name: string;
-  color: string;
+  color?: string;
 }
 
 export interface CreateNoteDto {

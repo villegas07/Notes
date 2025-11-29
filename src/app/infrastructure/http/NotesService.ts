@@ -13,6 +13,12 @@ export interface UpdateNotePayload {
   description: string;
 }
 
+export type NotePayload = {
+  title: string;
+  description: string;
+  categoryId?: string;
+};
+
 export class NotesService {
   /**
    * Crear una nueva nota

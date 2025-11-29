@@ -16,19 +16,26 @@ export function useCategories() {
       console.log('No token available, skipping categories fetch');
       return;
     }
-    
+
     setLoading(true);
     setError(null);
     try {
       console.log('Fetching categories...');
-      const result = await CategoriesService.getCategories(token);
+      const result: any = await CategoriesService.getCategories(token);
       console.log('Categories fetched:', result);
-      
-      // Ajuste: extraer el array real de categorías
-      const categoriesArray = Array.isArray(result)
-        ? result
-        : result?.data?.categories || result?.data || [];
-      
+
+      // Ajuste robusto para extraer el array de categorías
+      let categoriesArray: Category[] = [];
+      if (Array.isArray(result)) {
+        categoriesArray = result;
+      } else if (result?.data?.categories && Array.isArray(result.data.categories)) {
+        categoriesArray = result.data.categories;
+      } else if (result?.categories && Array.isArray(result.categories)) {
+        categoriesArray = result.categories;
+      } else if (result?.data && Array.isArray(result.data)) {
+        categoriesArray = result.data;
+      }
+
       console.log('Categories array:', categoriesArray);
       setCategories(categoriesArray);
     } catch (err) {
@@ -68,20 +75,26 @@ export function useCategories() {
     setError(null);
     try {
       if (!token) {
+        console.error('❌ NO TOKEN AVAILABLE');
         throw new Error('No auth token');
       }
-      
-      console.log('useCategories.addCategoryToNote - Starting');
-      console.log('noteId:', noteId);
-      console.log('categoryId:', categoryId);
-      console.log('token present:', !!token);
-      
+
+      console.log('🔵 useCategories.addCategoryToNote - Starting');
+      console.log('📝 Note ID:', noteId);
+      console.log('🏷️  Category ID:', categoryId);
+      console.log('🔑 Token present:', !!token);
+      console.log('🔑 Token (first 20 chars):', token.substring(0, 20) + '...');
+
       const result = await CategoriesService.addCategoryToNote(noteId, categoryId, token);
-      console.log('Category added to note successfully:', result);
-      
+      console.log('✅ Category added to note successfully:', result);
+
       return result;
     } catch (err) {
-      console.error('Error in useCategories.addCategoryToNote:', err);
+      console.error('❌ Error in useCategories.addCategoryToNote:', err);
+      if (err instanceof Error) {
+        console.error('❌ Error message:', err.message);
+        console.error('❌ Error stack:', err.stack);
+      }
       setError(err instanceof Error ? err.message : 'Failed to add category to note');
       throw err;
     } finally {

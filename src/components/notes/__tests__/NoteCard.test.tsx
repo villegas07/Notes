@@ -6,7 +6,7 @@ describe('NoteCard', () => {
   const mockNote: Note = {
     id: '1',
     title: 'Test Note',
-    content: 'Test Content',
+    description: 'Test Content',
     isArchived: false,
     createdAt: new Date('2025-11-27T10:00:00'),
     updatedAt: new Date('2025-11-27T17:15:00'),
@@ -110,8 +110,8 @@ describe('NoteCard', () => {
     const noteWithCategories: Note = {
       ...mockNote,
       categories: [
-        { id: '1', name: 'Work', color: '#3b82f6' },
-        { id: '2', name: 'Personal', color: '#10b981' },
+        { category: { id: '1', name: 'Work', color: '#3b82f6' } },
+        { category: { id: '2', name: 'Personal', color: '#10b981' } },
       ],
     };
 

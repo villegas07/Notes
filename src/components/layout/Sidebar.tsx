@@ -82,15 +82,17 @@ export function Sidebar({
         </div>
 
         {activeView === 'archived' && (
-          <p className="text-xs text-gray-500 mb-2 px-3">
-            Category filter only works with active notes
-          </p>
+          <div className="mb-2 px-3 py-2 bg-yellow-100 border-l-4 border-yellow-400 text-yellow-800 text-sm rounded">
+            <strong>Note:</strong> Category filter is disabled for archived notes.
+          </div>
         )}
 
         <div className="space-y-1">
           <button
-            onClick={() => onCategorySelect(null)}
+            onClick={activeView === 'archived' ? undefined : () => onCategorySelect(null)}
             disabled={activeView === 'archived'}
+            tabIndex={activeView === 'archived' ? -1 : 0}
+            aria-disabled={activeView === 'archived'}
             className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${
               selectedCategory === null
                 ? 'bg-gray-200 text-gray-900'
@@ -104,8 +106,10 @@ export function Sidebar({
           {categories.map((category) => (
             <button
               key={category.id}
-              onClick={() => onCategorySelect(category.id)}
+              onClick={activeView === 'archived' ? undefined : () => onCategorySelect(category.id)}
               disabled={activeView === 'archived'}
+              tabIndex={activeView === 'archived' ? -1 : 0}
+              aria-disabled={activeView === 'archived'}
               className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${
                 selectedCategory === category.id
                   ? 'bg-gray-200 text-gray-900'

@@ -34,18 +34,27 @@ export default function NotesPage() {
     unarchiveNote,
   } = useNotes();
 
-  const { categories, createCategory, filterNotesByCategory } = useCategories();
+  const { 
+    categories, 
+    createCategory, 
+    addCategoryToNote,
+    removeCategoryFromNote,
+    filterNotesByCategory 
+  } = useCategories();
 
+  // Filtrar notas por categoría
   useEffect(() => {
-    if (selectedCategory) {
-      filterNotesByCategory(selectedCategory).then(setFilteredNotes);
+    if (activeView === 'active') {
+      if (selectedCategory) {
+        filterNotesByCategory(selectedCategory).then(setFilteredNotes);
+      } else {
+        setFilteredNotes(notes);
+      }
     } else {
+      // En modo archivado, mostrar todas las notas archivadas sin filtrar por categoría
       setFilteredNotes(notes);
     }
-    
-    // Debug: verificar IDs de las notas
-    console.log('Filtered notes:', notes.map(n => ({ id: n.id, title: n.title })));
-  }, [selectedCategory, notes, filterNotesByCategory]);
+  }, [activeView, selectedCategory, notes, filterNotesByCategory]);
 
   // Cargar las notas cuando cambia la vista activa
   useEffect(() => {
@@ -65,6 +74,14 @@ export default function NotesPage() {
     if (selectedNote) {
       try {
         await updateNote(selectedNote.id, { title: data.title, description: data.description });
+        
+        // Recargar notas para obtener la versión actualizada
+        if (activeView === 'active') {
+          await fetchActiveNotes();
+        } else {
+          await fetchArchivedNotes();
+        }
+        
         setViewMode('list');
         setSelectedNote(null);
         
@@ -180,6 +197,58 @@ export default function NotesPage() {
     setViewMode('edit');
   };
 
+  // Handler para agregar categoría a nota
+  const handleAddCategoryToNote = async (noteId: string, categoryId: string) => {
+    try {
+      console.log('handleAddCategoryToNote called:', { noteId, categoryId });
+      await addCategoryToNote(noteId, categoryId);
+      
+      // Recargar las notas para obtener las categorías actualizadas
+      if (activeView === 'active') {
+        await fetchActiveNotes();
+      } else {
+        await fetchArchivedNotes();
+      }
+      
+      // Actualizar la nota seleccionada si está en modo edición
+      if (selectedNote?.id === noteId) {
+        const updatedNote = notes.find(n => n.id === noteId);
+        if (updatedNote) {
+          setSelectedNote(updatedNote);
+        }
+      }
+    } catch (error) {
+      console.error('Error in handleAddCategoryToNote:', error);
+      throw error;
+    }
+  };
+
+  // Handler para remover categoría de nota
+  const handleRemoveCategoryFromNote = async (noteId: string, categoryId: string) => {
+    try {
+      console.log('handleRemoveCategoryFromNote called:', { noteId, categoryId });
+      await removeCategoryFromNote(noteId, categoryId);
+      
+      // Recargar las notas para obtener las categorías actualizadas
+      if (activeView === 'active') {
+        await fetchActiveNotes();
+      } else {
+        await fetchArchivedNotes();
+      }
+      
+      // Actualizar la nota seleccionada
+      if (selectedNote?.id === noteId) {
+        const updatedNote = notes.find(n => n.id === noteId);
+        if (updatedNote) {
+          setSelectedNote(updatedNote);
+        }
+      }
+    } catch (error) {
+      console.error('Error in handleRemoveCategoryFromNote:', error);
+      throw error;
+    }
+  };
+
   const renderContent = () => {
     if (viewMode === 'create') {
       return (
@@ -197,10 +266,15 @@ export default function NotesPage() {
       return (
         <div className="flex items-center justify-center h-full">
           <NoteForm
-            note={selectedNote}
+            note={{
+              ...selectedNote,
+              categories: selectedNote.categories?.map(rel => rel.category) || []
+            }}
             onSave={handleUpdateNote}
             onCancel={() => setViewMode('detail')}
             categories={categories}
+            onAddCategory={handleAddCategoryToNote}
+            onRemoveCategory={handleRemoveCategoryFromNote}
           />
         </div>
       );
@@ -213,9 +287,18 @@ export default function NotesPage() {
     return (
       <div className="p-6">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold">
-            {activeView === 'active' ? 'Active Notes' : 'Archived Notes'}
-          </h2>
+          <div>
+            <h2 className="text-2xl font-bold">
+              {activeView === 'active' ? 'Active Notes' : 'Archived Notes'}
+            </h2>
+            {selectedCategory && (
+              <p className="text-sm text-gray-600 mt-1">
+                Filtered by: <span className="font-medium">
+                  {categories.find(c => c.id === selectedCategory)?.name}
+                </span>
+              </p>
+            )}
+          </div>
           {activeView === 'active' && (
             <button
               onClick={() => setViewMode('create')}
@@ -238,14 +321,20 @@ export default function NotesPage() {
           <div className="flex flex-col items-center justify-center py-20">
             <div className="text-6xl mb-4">📝</div>
             <h3 className="text-xl font-semibold text-gray-700 mb-2">
-              {activeView === 'active' ? 'Welcome to My Notes' : 'No archived notes'}
+              {selectedCategory 
+                ? 'No notes in this category'
+                : activeView === 'active' 
+                  ? 'Welcome to My Notes' 
+                  : 'No archived notes'}
             </h3>
             <p className="text-gray-500 mb-6 text-center max-w-md">
-              {activeView === 'active'
-                ? 'Organize your ideas, tasks and thoughts in one place. Create categories, archive notes and keep everything organized.'
-                : 'You don\'t have any archived notes yet.'}
+              {selectedCategory
+                ? 'There are no notes with this category yet.'
+                : activeView === 'active'
+                  ? 'Organize your ideas, tasks and thoughts in one place. Create categories, archive notes and keep everything organized.'
+                  : 'You don\'t have any archived notes yet.'}
             </p>
-            {activeView === 'active' && (
+            {activeView === 'active' && !selectedCategory && (
               <button
                 onClick={() => setViewMode('create')}
                 className="px-6 py-3 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors"
@@ -267,8 +356,9 @@ export default function NotesPage() {
                   key={note.id}
                   note={note}
                   onClick={() => handleNoteClick(note)}
-                  onArchive={handleArchiveNote}
+                  onArchive={activeView === 'archived' ? handleUnarchiveNote : handleArchiveNote}
                   onDelete={handleDeleteNote}
+                  isArchived={activeView === 'archived'}
                 />
               ))}
             </div>

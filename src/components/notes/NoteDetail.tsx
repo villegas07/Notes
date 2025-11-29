@@ -37,14 +37,14 @@ export default function NoteDetail({ note, onEdit, onArchive, onDelete, onClose,
   // Función helper para formatear fecha de forma segura
   const formatDate = (date: string | Date | undefined): string => {
     if (!date) return 'No date';
-    
+
     try {
       const dateObj = typeof date === 'string' ? new Date(date) : date;
-      
+
       if (isNaN(dateObj.getTime())) {
         return 'Invalid date';
       }
-      
+
       return format(dateObj, "d 'de' MMMM 'de' yyyy, HH:mm");
     } catch (error) {
       console.error('Error formatting date:', error, date);
@@ -53,12 +53,12 @@ export default function NoteDetail({ note, onEdit, onArchive, onDelete, onClose,
   };
 
   return (
-    <div 
+    <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
       style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)', backdropFilter: 'blur(4px)' }}
       onClick={onClose}
     >
-      <div 
+      <div
         className="w-full max-w-3xl bg-white rounded-xl shadow-2xl overflow-hidden animate-fadeIn"
         onClick={(e) => e.stopPropagation()}
       >
@@ -103,20 +103,23 @@ export default function NoteDetail({ note, onEdit, onArchive, onDelete, onClose,
               <div className="mb-6">
                 <div className="flex flex-wrap gap-2">
                   {note.categories
-                    .filter((category) => category && category.id && category.name && category.color)
-                    .map((category) => (
-                      <span
-                        key={category.id}
-                        className="px-3 py-1 rounded-full text-sm font-medium"
-                        style={{ 
-                          backgroundColor: category.color + '20', 
-                          color: category.color,
-                          border: `1px solid ${category.color}40`
-                        }}
-                      >
-                        {category.name}
-                      </span>
-                    ))}
+                    .filter((rel) => rel && rel.category && rel.category.id && rel.category.name)
+                    .map((rel) => {
+                      const cat = rel.category;
+                      return (
+                        <span
+                          key={cat.id}
+                          className="px-3 py-1 rounded-full text-sm font-medium"
+                          style={{
+                            backgroundColor: cat.color ? cat.color + '20' : '#3b82f620',
+                            color: cat.color || '#3b82f6',
+                            border: `1px solid ${cat.color ? cat.color + '40' : '#3b82f640'}`
+                          }}
+                        >
+                          {cat.name}
+                        </span>
+                      );
+                    })}
                 </div>
               </div>
             )}
@@ -125,7 +128,9 @@ export default function NoteDetail({ note, onEdit, onArchive, onDelete, onClose,
             <div className="mb-8">
               <div className="prose prose-lg max-w-none">
                 <div className="text-gray-700 whitespace-pre-wrap leading-relaxed text-base">
-                  {note.description || note.content || 'No content'}
+
+                  <p className="text-gray-900 whitespace-pre-wrap">{note.description}</p>
+
                 </div>
               </div>
             </div>
@@ -149,7 +154,7 @@ export default function NoteDetail({ note, onEdit, onArchive, onDelete, onClose,
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
                 </svg>
-                Archivar
+                Archived
               </button>
 
               <button
