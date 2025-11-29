@@ -81,7 +81,7 @@ export function useNotesMock() {
       const newNote: Note = {
         id: Date.now().toString(),
         title: data.title,
-        content: data.content,
+        description: data.description,
         isArchived: false,
         createdAt: new Date(),
         updatedAt: new Date(),
