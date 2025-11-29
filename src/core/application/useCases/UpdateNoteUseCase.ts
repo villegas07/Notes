@@ -13,8 +13,8 @@ export class UpdateNoteUseCase {
       throw new Error('Title cannot be empty');
     }
 
-    if (data.content !== undefined && data.content.trim().length === 0) {
-      throw new Error('Content cannot be empty');
+    if (data.description !== undefined && data.description.trim().length === 0) {
+      throw new Error('Description cannot be empty');
     }
 
     return await this.noteRepository.updateNote(id, data);
