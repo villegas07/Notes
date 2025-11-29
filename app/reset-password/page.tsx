@@ -30,7 +30,7 @@ export default function ResetPasswordPage() {
       return;
     }
     try {
-      await AuthService.resetPassword({ resetToken, newPassword });
+      await AuthService.resetPassword(resetToken, newPassword);
       setSuccess(true);
       setStatus("¡Contraseña restablecida correctamente!");
       setTimeout(() => router.push("/login"), 2000);
